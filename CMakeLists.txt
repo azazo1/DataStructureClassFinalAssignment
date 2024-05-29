@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
-project(DataStructureClassEndOfTermHomework)
+project(DataStructureClassFinalAssignment)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(DataStructureClassEndOfTermHomework
+add_executable(DataStructureClassFinalAssignment
         main.cpp
         BaselineTrial.cpp
         src/point/Point.cpp
