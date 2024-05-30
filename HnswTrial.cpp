@@ -6,6 +6,7 @@
 #include "src/hnsw/HNSW.h"
 #include "src/point/Point.h"
 #include "src/vec/Vec.h"
+#include <sys/timeb.h>
 using namespace point;
 using namespace vec;
 using namespace hnsw;
@@ -31,7 +32,8 @@ void main1() {
     HNSW hnsw(&vec);
     scanf("%d", &nq);
     int cnt = 0;
-    time_t start = time(NULL);
+    timeb start{};
+    ftime(&start);
     for (int i = 0; i < nq; i++) {
         Point pt;
         pt.readFromInput();
@@ -53,10 +55,14 @@ void main1() {
         }
 #ifdef DEBUG
 #ifndef DEBUG_SINGLE_SEARCH
-        printf("\r%d, time: %lld, avg: %f",
+        timeb now{};
+        ftime(&now);
+        printf("\r%d, time(s): %lld, time(ms): %hu, avg: %f Hz",
                cnt++,
-               time(NULL),
-               1.0 * cnt / (time(NULL) - start));
+               now.time - start.time,
+               now.millitm - start.millitm,
+               1.0 * cnt / ((now.time + now.millitm * 1.0 / 1000) -
+                            (start.time + start.millitm * 1.0 / 1000)));
         fflush(stdout);
 #endif
 #endif
@@ -99,5 +105,5 @@ void main2() {
 }
 
 int main() {
-    main1();
+    main2();
 }
