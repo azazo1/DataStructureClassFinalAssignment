@@ -20,7 +20,12 @@ namespace hnsw {
         }
     }
 
-    vec::Vec<int> HNSW::searchNearestTopK(const point::Point &target, int k) {
+    vec::Vec<int> HNSW::searchNearestTopK(const point::Point &target, const int k) const {
+        layer3.changeSearchBatch();
+        layer2.changeSearchBatch();
+        layer1.changeSearchBatch();
+        layer0.changeSearchBatch();
+
         // 先在最稀疏的 layer3 中搜索.
         int nearestPt = layer3.searchNearestNode(*ptVec, 0, target); // 只需要一个
         nearestPt = layer2.searchNearestNode(*ptVec, nearestPt, target);

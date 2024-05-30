@@ -50,7 +50,7 @@ namespace hnsw {
          * @param target 目标向量
          * @return 最接近的向量在向量容器中的索引值, 元素数有 k 个.
          */
-        vec::Vec<int> searchNearestTopK(const point::Point &target, int k);
+        vec::Vec<int> searchNearestTopK(const point::Point &target, int k) const;
     };
 } // hnsw
 

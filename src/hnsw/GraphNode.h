@@ -4,6 +4,7 @@
 
 #ifndef GRAPHNODE_H
 #define GRAPHNODE_H
+
 #include "../linkedlist/LinkedList.h"
 
 /**
@@ -24,7 +25,7 @@ namespace hnsw {
          */
         double distance = -1;
         /**
-         * 用来标志此节点是否在优先级队列中.
+         * 用来标志此节点是否在队列中.
          */
         bool inQueue = false;
         /**
@@ -53,17 +54,15 @@ namespace hnsw {
     /**
      * 判断第一个节点是否比第二个节点的距离近.
      * @note 距离值得是 distance 字段, 本方法不会对 batch 和 distance 进行检查, 请使用时自行检查.
+     *      在宏 DEBUG_GRAPH_NODE_BUFFER 被定义时, 此函数会检查 n1 和 n2 的 distance 和 batch.
+     *      如果检查到 distance 有为 -1 或者 batch 两者不相等, 则报错.
      */
-    inline bool compareNode(const GraphNode *n1, const GraphNode *n2) {
-        return n1->distance < n2->distance;
-    }
+    bool compareNode(const GraphNode *n1, const GraphNode *n2);
 
     /**
      * 上一个方法的非 const 版本.
      */
-    inline bool compareNode(GraphNode *n1, GraphNode *n2) {
-        return n1->distance < n2->distance;
-    }
+    bool compareNode(GraphNode *n1, GraphNode *n2);
 } // hnsw
 
 #endif //GRAPHNODE_H

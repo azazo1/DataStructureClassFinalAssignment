@@ -112,6 +112,9 @@ namespace mylinklist {
             disposed = head->val;
             delete head;
             head = n;
+            if (count == 1) {
+                tail = nullptr;
+            }
         } else {
             Node<T> *prev = getNode(position - 1);
             Node<T> *cur = prev->next;
@@ -119,6 +122,9 @@ namespace mylinklist {
             prev->next = cur->next;
             cur->next = nullptr;
             delete cur;
+            if (position == count - 1) {
+                tail = prev;
+            }
         }
         count--;
         return SUC;
@@ -133,11 +139,17 @@ namespace mylinklist {
             Node<T> *h = head;
             head = new Node<T>(val);
             head->next = h;
+            if (count == 0) {
+                tail = head;
+            }
         } else {
             Node<T> *prev = getNode(position - 1);
             auto *cur = new Node<T>(val);
             cur->next = prev->next;
             prev->next = cur;
+            if (position == count) {
+                tail = cur;
+            }
         }
         count++;
         return SUC;
@@ -150,22 +162,6 @@ namespace mylinklist {
             cur = cur->next;
         }
         return cur;
-    }
-
-    template<class T>
-    std::ostream &operator<<(std::ostream &out, const LinkedList<T> &list) {
-        out << "[";
-        Node<T> *cur = list.head;
-        while (cur != nullptr) {
-            out << cur->val;
-            cur = cur->next;
-            if (cur == nullptr) {
-                out << "]";
-            } else {
-                out << ", ";
-            }
-        }
-        return out;
     }
 
     template<class T>
@@ -189,7 +185,14 @@ namespace mylinklist {
 
     template<class T>
     ErrorCode LinkedList<T>::push_back(const T &val) {
-        return insert(count, val);
+        if (tail == nullptr) {
+            head = tail = new Node<T>(val);
+        } else {
+            tail->next = new Node<T>(val);
+            tail = tail->next;
+        }
+        count++;
+        return SUC;
     }
 
     template<class T>
@@ -208,6 +211,16 @@ namespace mylinklist {
         }
         count++;
         return SUC;
+    }
+
+    template<class T>
+    T LinkedList<T>::pop_head() {
+        if (head == nullptr) {
+            throw "empty";
+        }
+        T rst;
+        remove(0, rst);
+        return rst;
     }
 } // mylinklist
 

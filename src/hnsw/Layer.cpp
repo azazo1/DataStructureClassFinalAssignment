@@ -18,72 +18,82 @@ namespace hnsw {
         const GraphNode node(pointIdx);
         push_back(node); // 此处发生了拷贝, 因此下方以左值使用 node 将会是错误的.
         const int nodeIdx = length;
-        Vec<int> nearest = expandTopK(ptVec, 0, ptVec[pointIdx], N_LINK);
-        for (const int i: nearest) {
+        const int nearest = searchNearestNode(ptVec, 0, ptVec[pointIdx]);
+        Vec<int> nearestTopK = expandTopK(ptVec, nearest, ptVec[pointIdx], N_LINK);
+        for (const int i: nearestTopK) {
             // 建立双向连接
             (*this)[i].link(nodeIdx);
             (*this)[nodeIdx].link(nodeIdx);
         }
     }
 
-    vec::Vec<int> Layer::expandTopK(const Vec<point::Point> &ptVec, int startPtIdx,
-                                    const point::Point &target, int k) const {
-        // todo 突然发现不对, 如果 k == 1, 假设极端情况 所有点连成一条线, 那么搜索会提前结束, 并不能找到最近的点.
-        // todo 按照注释重写此方法.
-        searchBatch++; // 更新批次计数
+    vec::Vec<int> Layer::expandTopK(const Vec<point::Point> &ptVec, const int startPtIdx,
+                                    const point::Point &target, const int k) const {
+        if (startPtIdx % dk != 0) {
+            return Vec<int>();
+        }
         if (length <= k) {
-            //  Layer 节点数不够, 不搜索了, 直接返回
+            // Layer 节点数不够, 不拓展了, 直接返回
             // 排序
             pq::PriorityQueue<GraphNode *> pq(length, compareNode);
             for (GraphNode &node: *this) {
+                if (node.batch != searchBatch) {
+                    generateBufferForNode(ptVec, node, target);
+                }
                 pq.add(&node);
             }
             // 倒序提取
             Vec<int> rst(length);
+            rst.setLength(length);
             for (int i = length - 1; i >= 0; i--) {
                 rst[i] = pq.pop()->pointIdx;
             }
             return rst;
         }
-        // Layer 节点数足够, 取前 k 个节点直接放进 pq 然后开始搜索.
-        pq::PriorityQueue<GraphNode *> pq(compareNode);
-        for (int i = 0; i < k; i++) {
-            generateBufferForNode(ptVec, arr[i], target); // 生成计算缓冲.
-            arr[i].inQueue = true;
-            pq.add(arr + i); // 以第 0 个节点作为开始节点.
+        // Layer 节点数足够, 开始拓展节点, 起始这里有点像广度优先搜索.
+        pq::PriorityQueue<GraphNode *> rstQueue(k, compareNode); // 为了保持顺序, 用的是优先级队列, 而不是链表.
+        mylinklist::LinkedList<GraphNode *> queue;
+        GraphNode *node = arr + startPtIdx / dk;
+
+        if (node->batch != searchBatch) {
+            generateBufferForNode(ptVec, *node, target);
         }
-        bool added = true;
-        // 没有新节点被添加进 pq 时, 说明搜索完毕.
-        while (pq.getSize() != 0 && added) {
-            GraphNode *node = pq.pop();
-            node->inQueue = false;
+        node->inQueue = true; // 此处 inQueue 字段表示此节点是否已经被 queue 记录.
+        queue.push_back(node);
+
+        while (rstQueue.getSize() + queue.size() < k) {
+            node = queue.pop_head(); // 节点都已经缓存过.
+            rstQueue.add(node);
+
+            // 遍历所有邻居.
             const int size = node->links.size();
-            added = false;
             for (int i = 0; i < size; i++) {
-                // 遍历每个邻居
+                // todo 优化, 使用迭代器
                 int neighborIdx;
-                node->links.retrieve(i, neighborIdx); // todo 优化这个, 造个迭代器
-                GraphNode &neighbor = arr[neighborIdx];
-                // 接下来, 如果 neighbor 不在 pq 中, 对 neighbor 生成缓冲, 进行判断:
-                // 只有 neighbor 的 distance 小于 node 时才把 neighbor 添加进 pq.
-                if (neighbor.batch != searchBatch) {
-                    // 此次搜索没有涉及过此邻居, 邻居中的缓冲值都是无效的.
-                    generateBufferForNode(ptVec, neighbor, target);
+                node->links.retrieve(i, neighborIdx);
+                GraphNode *neighbor = arr + neighborIdx;
+
+                // 只有邻居没被搜索过时才加入.
+                if (neighbor->batch != searchBatch) {
+                    generateBufferForNode(ptVec, *neighbor, target);
                 }
-                if (!neighbor.inQueue && neighbor.distance < node->distance) {
-                    neighbor.inQueue = true;
-                    pq.add(&neighbor);
-                    added = true;
+                if (!neighbor->inQueue) {
+                    neighbor->inQueue = true;
+                    queue.push_back(neighbor); // 插入到 queue 的节点都要保证已经缓存过.
+                }
+                if (queue.size() + rstQueue.getSize() == k) {
+                    break;
                 }
             }
         }
-        // 取 distance 最小的 k 个, 倒序存放在 Vec 中, 忽略前面的节点.
-        while (pq.getSize() > k) {
-            pq.pop();
+        while (!queue.empty()) {
+            rstQueue.add(queue.pop_head());
         }
+        // 拓展完毕, rstQueue 中的节点数一定是 k.
         Vec<int> rst(k);
-        for (int i = 0; i < k; i++) {
-            rst[i] = pq.pop()->pointIdx;
+        rst.setLength(k);
+        for (int i = k - 1; i >= 0; i--) {
+            rst[i] = rstQueue.pop()->pointIdx;
         }
         return rst;
     }
@@ -93,5 +103,41 @@ namespace hnsw {
         node.batch = searchBatch;
         node.distance = ptVec[node.pointIdx].distanceTo(target);
         node.inQueue = false;
+    }
+
+    int Layer::searchNearestNode(const Vec<point::Point> &ptVec, const int startPtIdx,
+                                 const point::Point &target) const {
+        // 起始向量不在此层.
+        if (startPtIdx % dk != 0) {
+            return -1;
+        }
+        GraphNode *node = arr + startPtIdx / dk;
+        GraphNode *newNode = node;
+        while (newNode != nullptr) {
+            node = newNode;
+            newNode = nullptr;
+            const int neighborCnt = node->links.size();
+            for (int i = 0; i < neighborCnt; i++) {
+                // 遍历每个邻居
+                int neighborIdx;
+                node->links.retrieve(i, neighborIdx);
+                GraphNode &neighbor = arr[neighborIdx];
+                if (neighbor.batch != searchBatch) {
+                    generateBufferForNode(ptVec, neighbor, target);
+                }
+                // 找到 distance 更小的邻居
+                if (neighbor.distance < node->distance) {
+                    // 找到 distance 最小的邻居
+                    if (newNode == nullptr || neighbor.distance < newNode->distance) {
+                        newNode = &neighbor;
+                    }
+                }
+            }
+        }
+        return node->pointIdx;
+    }
+
+    void Layer::changeSearchBatch() const {
+        searchBatch++;
     }
 } // hnsw

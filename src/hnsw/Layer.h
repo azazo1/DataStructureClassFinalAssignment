@@ -65,6 +65,12 @@ namespace hnsw {
         int searchNearestNode(const Vec<point::Point> &ptVec,
                               int startPtIdx,
                               const point::Point &target) const;
+
+        /**
+         * 改变搜索批次, 使所有节点的距离缓冲都失效.
+         * @note 只需要在目标搜索向量发生改变的时候调用.
+         */
+        void changeSearchBatch() const;
     };
 } // hnsw
 

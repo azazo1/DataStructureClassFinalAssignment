@@ -39,6 +39,16 @@ namespace vec {
 
         void push_back(const T &val);
 
+        /**
+         * 修改此 Vec 的尺寸.
+         * 此方法不会对元素进行新建或者修改, 只会改变 length 字段的值,
+         * 且参数 length 需要小于等于 capacity 字段.
+         * @note 如果宏 DEBUG_VEC_SET_LENGTH 被定义, length 参数不符合上述要求时, 会报错.
+         *       如果宏没被定义, 不会检查 length 参数和 capacity 字段的关系, 调用者需要自己保证 length <= capacity.
+         * @param length 期望的尺寸
+         */
+        void setLength(int length) const;
+
         int getCapacity() const;
 
         int getLength() const;

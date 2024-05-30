@@ -4,6 +4,10 @@
 #ifndef END_HOMEWORK_VEC_TPP
 #define END_HOMEWORK_VEC_TPP
 
+#ifdef DEBUG_VEC_SET_LENGTH
+#include <iostream>
+#endif
+
 namespace vec {
     template<class T>
     Vec<T>::Vec(const int initialSize)
@@ -100,6 +104,17 @@ namespace vec {
     template<class T>
     T *Vec<T>::end() {
         return arr + length;
+    }
+
+    template<class T>
+    void Vec<T>::setLength(int length) const {
+#ifdef DEBUG_VEC_SET_LENGTH
+        if (length > capacity) {
+            std::cerr << "invalid length" << std::endl;
+            exit(1001);
+        }
+#endif
+        this->length = length;
     }
 }
 

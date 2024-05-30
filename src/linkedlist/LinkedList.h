@@ -68,6 +68,8 @@ namespace mylinklist {
 
         ErrorCode push_back(const T &val);
 
+        T pop_head();
+
         /**
          * 在列表末尾添加元素, 如果元素已经在列表中出现则不添加.
          * @param val 要添加的元素
@@ -77,20 +79,12 @@ namespace mylinklist {
 
         bool contains(const T &target);
 
-        /**
-         * Incorrect version:
-         * friend ostream&operator<<(ostream &out, const LinkedList<T> &list);
-         * when using "friend" keyword, the function after it has its own
-         * generics, thus "template <class U>" is essential !!!
-         */
-        template<class U>
-        friend std::ostream &operator<<(std::ostream &out, const LinkedList<U> &list);
-
         ~LinkedList();
 
     protected:
         int count;
         Node<T> *head;
+        Node<T> *tail;
 
         Node<T> *getNode(int position) const;
     };
