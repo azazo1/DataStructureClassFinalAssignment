@@ -33,6 +33,18 @@ namespace mylinklist {
     };
 
     template<class T>
+    class Iterator {
+        const Node<T> *startNode;
+
+    public:
+        Iterator(const Node<T> *startNode);
+
+        bool hasNext() const;
+
+        T next();
+    };
+
+    template<class T>
     class LinkedList {
     public:
         LinkedList();
@@ -73,6 +85,8 @@ namespace mylinklist {
         bool contains(const T &target);
 
         ~LinkedList();
+
+        Iterator<T> getIter() const;
 
     protected:
         int count = 0;

@@ -88,7 +88,7 @@ baselineSearchWithHashSet(const vec::Vec<point::Point> &vec,
 using namespace vec;
 using namespace point;
 
-int main() {
+int main_b() {
     int n, d, k, nq;
     scanf("%d %d %d", &n, &d, &k);
     N_FEATURE = d;

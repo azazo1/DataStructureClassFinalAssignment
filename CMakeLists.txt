@@ -30,6 +30,10 @@ add_executable(HnswTrial
         src/point/Point.h
         src/pq/PriorityQueue.h
         src/pq/PriorityQueue.tpp
+
+        BaselineTrial.cpp
+        src/hashset/HashSet.cpp
+        src/hashset/HashSet.h
 )
 
 add_executable(MergedResult MergedResult.cpp)

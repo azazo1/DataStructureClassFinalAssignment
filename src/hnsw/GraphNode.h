@@ -12,7 +12,7 @@
  * 并与其建立连接.
  * @note 此值不代表 links 列表中元素个数最大值, 在后续节点加入 Graph 时, 节点可能被动拓展连接.
  */
-#define N_LINK 3
+#define N_LINK 4
 
 namespace hnsw {
     struct GraphNode {

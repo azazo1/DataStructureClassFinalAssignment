@@ -236,6 +236,27 @@ namespace mylinklist {
         remove(0, rst);
         return rst;
     }
+
+    template<class T>
+    Iterator<T> LinkedList<T>::getIter() const {
+        return head;
+    }
+
+    template<class T>
+    Iterator<T>::Iterator(const Node<T> *startNode): startNode(startNode) {
+    }
+
+    template<class T>
+    T Iterator<T>::next() {
+        T rst = startNode->val;
+        startNode = startNode->next;
+        return rst;
+    }
+
+    template<class T>
+    bool Iterator<T>::hasNext() const {
+        return startNode != nullptr;
+    }
 } // mylinklist
 
 #endif

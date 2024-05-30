@@ -71,13 +71,13 @@ namespace hnsw {
             rstQueue.add(node);
 
             // 遍历所有邻居.
-            const int size = node->links.size();
-            for (int i = 0; i < size; i++) {
-                // todo 优化, 使用迭代器
-                int neighborIdx;
-                node->links.retrieve(i, neighborIdx);
+            for (mylinklist::Iterator<int> i = node->links.getIter(); i.hasNext();) {
+                const int neighborIdx = i.next();
+                // const int size = node->links.size();
+                // for (int i = 0; i < size; i++) {
+                // int neighborIdx;
+                // node->links.retrieve(i, neighborIdx);
                 GraphNode *neighbor = arr + neighborIdx;
-
                 // 只有邻居没被搜索过时才加入.
                 if (neighbor->batch != searchBatch) {
                     generateBufferForNode(ptVec, *neighbor, target);
@@ -90,7 +90,6 @@ namespace hnsw {
                     break;
                 }
             }
-            int t = size;
         }
         while (!queue.empty()) {
             rstQueue.add(queue.pop_head());
@@ -122,11 +121,13 @@ namespace hnsw {
         while (newNode != nullptr) {
             node = newNode;
             newNode = nullptr;
-            const int neighborCnt = node->links.size();
-            for (int i = 0; i < neighborCnt; i++) {
-                // 遍历每个邻居
-                int neighborIdx;
-                node->links.retrieve(i, neighborIdx);
+            // const int neighborCnt = node->links.size();
+            // for (int i = 0; i < neighborCnt; i++) {
+            // 遍历每个邻居
+            // int neighborIdx;
+            // node->links.retrieve(i, neighborIdx);
+            for (mylinklist::Iterator<int> i = node->links.getIter(); i.hasNext();) {
+                const int neighborIdx = i.next();
                 GraphNode &neighbor = arr[neighborIdx];
                 if (neighbor.batch != searchBatch) {
                     generateBufferForNode(ptVec, neighbor, target);
