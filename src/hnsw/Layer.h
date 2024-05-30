@@ -11,6 +11,19 @@
 namespace hnsw {
     class Layer : public vec::Vec<GraphNode> {
         int dk;
+        mutable int searchBatch = 0;
+
+
+        /**
+         * 为一个节点生成距离缓存, 会设置 node 的 batch 和 distance 字段, 将 inQueue 字段设置为 false.
+         * @note 由于 node 存放索引值, 所以需要 ptVec 参数.
+         * @param ptVec 向量容器
+         * @param node 要计算距离缓存的节点
+         * @param target 目标向量, 计算节点所代表的向量和其的距离.
+         */
+        void generateBufferForNode(const Vec<point::Point> &ptVec,
+                                   GraphNode &node,
+                                   const point::Point &target) const;
 
     public:
         /**
@@ -31,14 +44,14 @@ namespace hnsw {
 
         /**
          * 查找和目标向量最接近的向量.
-         * @param point 目标向量
          * @param ptVec 向量容器
+         * @param target 目标向量
          * @param k topK 中的 K, 即最近向量数量.
          * @return 返回最接近向量在向量容器中的索引值, 元素有 k 个.
          */
-        Vec<int> searchNearestNode(const point::Point &point,
-                                   const Vec<point::Point> &ptVec,
-                                   int k) const;
+        Vec<int> searchNearestNodeTopK(const Vec<point::Point> &ptVec,
+                                       const point::Point &target,
+                                       int k) const;
     };
 } // hnsw
 

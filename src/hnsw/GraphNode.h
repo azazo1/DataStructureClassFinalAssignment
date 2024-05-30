@@ -16,12 +16,24 @@
 namespace hnsw {
     struct GraphNode {
         /**
+         * 用于记录缓存的距离所属的搜索批次.
+         */
+        int batch = -1;
+        /**
+         * 用于记录缓存的距离.
+         */
+        double distance = -1;
+        /**
+         * 用来标志此节点是否在优先级队列中.
+         */
+        bool inQueue = false;
+        /**
          * 向量在向量容器中的索引.
          */
         int pointIdx = -1;
 
         /**
-         * 此节点和其他节点的连接.
+         * 此节点和其他节点的连接, 储存的是其他节点在 Layer 中的索引.
          */
         mylinklist::LinkedList<int> links;
 
@@ -37,6 +49,21 @@ namespace hnsw {
 
         explicit GraphNode(int pointIdx);
     };
+
+    /**
+     * 判断第一个节点是否比第二个节点的距离近.
+     * @note 距离值得是 distance 字段, 本方法不会对 batch 和 distance 进行检查, 请使用时自行检查.
+     */
+    inline bool compareNode(const GraphNode *n1, const GraphNode *n2) {
+        return n1->distance < n2->distance;
+    }
+
+    /**
+     * 上一个方法的非 const 版本.
+     */
+    inline bool compareNode(GraphNode *n1, GraphNode *n2) {
+        return n1->distance < n2->distance;
+    }
 } // hnsw
 
 #endif //GRAPHNODE_H

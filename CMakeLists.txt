@@ -19,6 +19,7 @@ add_executable(DataStructureClassFinalAssignment
         src/hnsw/GraphNode.h
         src/hnsw/Layer.cpp
         src/hnsw/Layer.h
+        src/pq/PriorityQueue.h
 )
 
 add_executable(MergedResult MergedResult.cpp)
