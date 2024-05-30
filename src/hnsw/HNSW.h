@@ -34,6 +34,11 @@ namespace hnsw {
          */
         Layer layer3 = Layer(DK_LAYER3);
 
+        /**
+         * 用向量容器中的值来构建所有的层.
+         */
+        void buildLayers();
+
     public:
         /**
          * @param ptVec 所有向量的容器
@@ -41,16 +46,11 @@ namespace hnsw {
         HNSW(const vec::Vec<point::Point> *ptVec);
 
         /**
-         * 用向量容器中的值来构建所有的层.
-         */
-        void buildLayers();
-
-        /**
          * 找到和目标向量最接近的向量.
-         * @param pt 目标向量
-         * @return 最接近的向量在向量容器中的索引值
+         * @param target 目标向量
+         * @return 最接近的向量在向量容器中的索引值, 元素数有 k 个.
          */
-        int searchNearest(const point::Point &pt);
+        vec::Vec<int> searchNearestTopK(const point::Point &target, int k);
     };
 } // hnsw
 

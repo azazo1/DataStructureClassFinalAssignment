@@ -43,15 +43,28 @@ namespace hnsw {
         void emplaceNode(const Vec<point::Point> &ptVec, int pointIdx);
 
         /**
-         * 查找和目标向量最接近的向量.
+         * 把 nearest 向量拓展为 topk.
          * @param ptVec 向量容器
+         * @param startPtIdx 拓展的起始向量在向量容器中的索引值, 如果此索引值不在此 Layer 中, 返回空数组.
          * @param target 目标向量
-         * @param k topK 中的 K, 即最近向量数量.
-         * @return 返回最接近向量在向量容器中的索引值, 元素有 k 个.
+         * @param k topK 中的 K, 即查找的最近向量数量.
+         * @return 返回最接近向量在向量容器中的索引值, 元素有 k 个, 另一种情况见 startPtIdx.
          */
-        Vec<int> searchNearestNodeTopK(const Vec<point::Point> &ptVec,
-                                       const point::Point &target,
-                                       int k) const;
+        Vec<int> expandTopK(const Vec<point::Point> &ptVec,
+                            int startPtIdx,
+                            const point::Point &target,
+                            int k) const;
+
+        /**
+         * 查找层内和目标向量最接近的向量.
+         * @param ptVec 向量容器
+         * @param startPtIdx 搜索的起始向量在向量容器中的索引值, 如果此索引值不在此 Layer 中, 返回 -1.
+         * @param target 目标向量
+         * @return 返回最接近向量在向量容器中的索引值, 另一种情况见 startPtIdx.
+         */
+        int searchNearestNode(const Vec<point::Point> &ptVec,
+                              int startPtIdx,
+                              const point::Point &target) const;
     };
 } // hnsw
 
