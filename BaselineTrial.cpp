@@ -3,7 +3,7 @@
 //
 #include <cstdio>
 #include <cfloat>
-
+#include <ctime>
 #include "src/hashset/HashSet.h"
 #include "src/point/Point.h"
 #include "src/vec/Vec.h"
@@ -18,7 +18,7 @@
  * @note 在本人的电脑上, 占用 cpu 约 15%, 在测试集 8000 中能做到每秒 105 次查询.
  */
 vec::Vec<int> baselineSearch(const vec::Vec<point::Point> &vec,
-                                               const point::Point &query, int k) {
+                             const point::Point &query, const int k) {
     if (vec.getLength() == 0) {
         return vec::Vec<int>();
     }
@@ -56,7 +56,7 @@ vec::Vec<int> baselineSearch(const vec::Vec<point::Point> &vec,
  */
 vec::Vec<int>
 baselineSearchWithHashSet(const vec::Vec<point::Point> &vec,
-                          const point::Point &query, int k) {
+                          const point::Point &query, const int k) {
     if (vec.getLength() == 0) {
         return vec::Vec<int>();
     }
@@ -80,4 +80,61 @@ baselineSearchWithHashSet(const vec::Vec<point::Point> &vec,
         idxSet.put(nearestIdx);
     }
     return idxSet.flatten();
+}
+
+#define DEBUG
+// #define DEBUG_SINGLE_SEARCH
+
+using namespace vec;
+using namespace point;
+
+int main() {
+    int n, d, k, nq;
+    scanf("%d %d %d", &n, &d, &k);
+    N_FEATURE = d;
+    Vec<Point> vec;
+    for (int i = 0; i < n; i++) {
+        Point pt;
+        pt.readFromInput();
+        vec.push_back(pt);
+    }
+    scanf("%d", &nq);
+    int cnt = 0;
+    time_t start = time(NULL);
+    for (int i = 0; i < nq; i++) {
+        Point pt;
+        pt.readFromInput();
+        // auto vecIdx = baselineSearch(vec, pt, k);
+        auto vecIdx = baselineSearchWithHashSet(vec, pt, k);
+        for (int j: vecIdx) {
+#ifndef DEBUG
+#ifndef DEBUG_SINGLE_SEARCH
+            printf("%d ", j);
+#endif
+#endif
+
+#ifdef DEBUG_SINGLE_SEARCH
+            printf("\r%d, time: %lld, avg: %f",
+                   cnt++,
+                   time(NULL),
+                   1.0 * cnt / (time(NULL) - start));
+            fflush(stdout);
+#endif
+        }
+#ifdef DEBUG
+#ifndef DEBUG_SINGLE_SEARCH
+        printf("\r%d, time: %lld, avg: %f",
+               cnt++,
+               time(NULL),
+               1.0 * cnt / (time(NULL) - start));
+        fflush(stdout);
+#endif
+#endif
+
+#ifndef DEBUG
+#ifndef DEBUG_SINGLE_SEARCH
+        printf("\n");
+#endif
+#endif
+    }
 }

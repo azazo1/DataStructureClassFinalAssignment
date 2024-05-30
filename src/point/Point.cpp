@@ -32,7 +32,7 @@ namespace point {
     void Point::readFromInput() {
         for (int i = 0; i < N_FEATURE; i++) {
             if (scanf("%lf", features + i) != 1) {
-                throw "Input Error";
+                throw InputException();
             }
         }
     }

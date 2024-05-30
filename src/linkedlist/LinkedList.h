@@ -5,8 +5,15 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 #include <ostream>
+#include <exception>
 
 namespace mylinklist {
+    class EmptyException : public std::exception {
+        const char *what() const noexcept override {
+            return "Emtpy LinkedList";
+        }
+    };
+
     template<class T>
     struct Node {
         T val;
@@ -20,20 +27,6 @@ namespace mylinklist {
 
         ~Node();
     };
-
-    template<class T>
-    Node<T>::Node(): val(), next(nullptr) {
-    }
-
-    template<class T>
-    Node<T>::Node(const T &val, Node<T> *link): val(val), next(link) {
-    }
-
-    template<class T>
-    Node<T>::~Node() {
-        // 实际上这并不是一个很好的设计, 使其在拷贝 Node 时出现异常.
-        delete next;
-    }
 
     enum ErrorCode {
         SUC, EMPTY, RANGE_ERROR, DUPLICATE
@@ -82,9 +75,9 @@ namespace mylinklist {
         ~LinkedList();
 
     protected:
-        int count;
-        Node<T> *head;
-        Node<T> *tail;
+        int count = 0;
+        Node<T> *head = nullptr;
+        Node<T> *tail = nullptr;
 
         Node<T> *getNode(int position) const;
     };

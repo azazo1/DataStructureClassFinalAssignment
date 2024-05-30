@@ -22,7 +22,7 @@ namespace hnsw {
          * @param target 目标向量, 计算节点所代表的向量和其的距离.
          */
         void generateBufferForNode(const Vec<point::Point> &ptVec,
-                                   GraphNode &node,
+                                   const GraphNode &node,
                                    const point::Point &target) const;
 
     public:
@@ -68,7 +68,7 @@ namespace hnsw {
 
         /**
          * 改变搜索批次, 使所有节点的距离缓冲都失效.
-         * @note 只需要在目标搜索向量发生改变的时候调用.
+         * @note 需要在目标搜索向量发生改变 或 inQueue 字段针对的队列发生变化 的时候调用.
          */
         void changeSearchBatch() const;
     };

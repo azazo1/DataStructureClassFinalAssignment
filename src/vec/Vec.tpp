@@ -107,7 +107,7 @@ namespace vec {
     }
 
     template<class T>
-    void Vec<T>::setLength(int length) const {
+    void Vec<T>::setLength(int length) {
 #ifdef DEBUG_VEC_SET_LENGTH
         if (length > capacity) {
             std::cerr << "invalid length" << std::endl;

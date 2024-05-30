@@ -16,14 +16,18 @@ namespace hnsw {
             return;
         }
         const GraphNode node(pointIdx);
+        const int nodeIdx = length; // 此处 length 应该等于 pointIdx / dk
         push_back(node); // 此处发生了拷贝, 因此下方以左值使用 node 将会是错误的.
-        const int nodeIdx = length;
         const int nearest = searchNearestNode(ptVec, 0, ptVec[pointIdx]);
+        changeSearchBatch();
         Vec<int> nearestTopK = expandTopK(ptVec, nearest, ptVec[pointIdx], N_LINK);
         for (const int i: nearestTopK) {
             // 建立双向连接
-            (*this)[i].link(nodeIdx);
-            (*this)[nodeIdx].link(nodeIdx);
+            if (i / dk != nodeIdx) {
+                // 不与自己建立连接
+                (*this)[i / dk].link(nodeIdx);
+                (*this)[nodeIdx].link(i / dk);
+            }
         }
     }
 
@@ -35,8 +39,9 @@ namespace hnsw {
         if (length <= k) {
             // Layer 节点数不够, 不拓展了, 直接返回
             // 排序
-            pq::PriorityQueue<GraphNode *> pq(length, compareNode);
-            for (GraphNode &node: *this) {
+            pq::PriorityQueue<const GraphNode *> pq(length, compareNode);
+            for (int i = 0; i < length; i++) {
+                const GraphNode &node = arr[i];
                 if (node.batch != searchBatch) {
                     generateBufferForNode(ptVec, node, target);
                 }
@@ -85,6 +90,7 @@ namespace hnsw {
                     break;
                 }
             }
+            int t = size;
         }
         while (!queue.empty()) {
             rstQueue.add(queue.pop_head());
@@ -98,7 +104,7 @@ namespace hnsw {
         return rst;
     }
 
-    void Layer::generateBufferForNode(const Vec<point::Point> &ptVec, GraphNode &node,
+    void Layer::generateBufferForNode(const Vec<point::Point> &ptVec, const GraphNode &node,
                                       const point::Point &target) const {
         node.batch = searchBatch;
         node.distance = ptVec[node.pointIdx].distanceTo(target);

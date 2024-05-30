@@ -47,7 +47,7 @@ namespace vec {
          *       如果宏没被定义, 不会检查 length 参数和 capacity 字段的关系, 调用者需要自己保证 length <= capacity.
          * @param length 期望的尺寸
          */
-        void setLength(int length) const;
+        void setLength(int length);
 
         int getCapacity() const;
 

@@ -19,15 +19,15 @@ namespace hnsw {
         /**
          * 用于记录缓存的距离所属的搜索批次.
          */
-        int batch = -1;
+        mutable int batch = -1;
         /**
          * 用于记录缓存的距离.
          */
-        double distance = -1;
+        mutable double distance = -1;
         /**
          * 用来标志此节点是否在队列中.
          */
-        bool inQueue = false;
+        mutable bool inQueue = false;
         /**
          * 向量在向量容器中的索引.
          */
@@ -49,6 +49,8 @@ namespace hnsw {
         void link(int otherIdx);
 
         explicit GraphNode(int pointIdx);
+
+        GraphNode() = default;
     };
 
     /**

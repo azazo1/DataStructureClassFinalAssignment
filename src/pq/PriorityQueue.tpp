@@ -126,7 +126,7 @@ namespace pq {
     template<class T>
     T PriorityQueue<T>::pop() {
         if (eleCnt == 0) {
-            throw "empty";
+            throw EmptyPQException();
         }
         eleCnt--;
         T rst = arr[0];

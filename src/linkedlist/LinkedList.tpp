@@ -11,17 +11,31 @@
 
 namespace mylinklist {
     template<class T>
+    Node<T>::Node(): val(), next(nullptr) {
+    }
+
+    template<class T>
+    Node<T>::Node(const T &val, Node<T> *link): val(val), next(link) {
+    }
+
+    template<class T>
+    Node<T>::~Node() {
+        // 实际上这并不是一个很好的设计, 使其在拷贝 Node 时出现异常.
+        delete next;
+    }
+
+    template<class T>
     bool LinkedList<T>::full() const {
         auto *cur = new Node<T>();
         return cur == nullptr;
     }
 
     template<class T>
-    LinkedList<T>::LinkedList(): count(0), head(nullptr) {
+    LinkedList<T>::LinkedList(): head(nullptr) {
     }
 
     template<class T>
-    LinkedList<T>::LinkedList(const LinkedList &other): count(0), head(nullptr) {
+    LinkedList<T>::LinkedList(const LinkedList &other): head(nullptr) {
         *this = other;
     }
 
@@ -31,15 +45,15 @@ namespace mylinklist {
             return *this;
         }
         clear();
+        count = other.count;
         Node<T> *oNode = other.head;
-        Node<T> *sEnd = nullptr;
         while (oNode != nullptr) {
             if (head == nullptr) {
                 head = new Node<T>(oNode->val);
-                sEnd = head;
+                tail = head;
             } else {
-                sEnd->next = new Node<T>(oNode->val);
-                sEnd = sEnd->next;
+                tail->next = new Node<T>(oNode->val);
+                tail = tail->next;
             }
             oNode = oNode->next;
         }
@@ -216,7 +230,7 @@ namespace mylinklist {
     template<class T>
     T LinkedList<T>::pop_head() {
         if (head == nullptr) {
-            throw "empty";
+            throw EmptyException();
         }
         T rst;
         remove(0, rst);

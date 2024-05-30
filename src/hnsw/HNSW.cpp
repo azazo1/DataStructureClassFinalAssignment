@@ -4,8 +4,6 @@
 
 #include "HNSW.h"
 
-#include <algorithm>
-
 namespace hnsw {
     HNSW::HNSW(const vec::Vec<point::Point> *ptVec): ptVec(ptVec) {
         buildLayers();
@@ -13,6 +11,12 @@ namespace hnsw {
 
     void HNSW::buildLayers() {
         for (int i = 0; i < ptVec->getLength(); i++) {
+            // 注意这里也要改变搜索批次
+            layer3.changeSearchBatch();
+            layer2.changeSearchBatch();
+            layer1.changeSearchBatch();
+            layer0.changeSearchBatch();
+
             layer0.emplaceNode(*ptVec, i);
             layer1.emplaceNode(*ptVec, i);
             layer2.emplaceNode(*ptVec, i);
@@ -31,6 +35,8 @@ namespace hnsw {
         nearestPt = layer2.searchNearestNode(*ptVec, nearestPt, target);
         nearestPt = layer1.searchNearestNode(*ptVec, nearestPt, target);
         nearestPt = layer0.searchNearestNode(*ptVec, nearestPt, target);
+
+        layer0.changeSearchBatch(); // inQueue 针对的队列发生变化
         return layer0.expandTopK(*ptVec, nearestPt, target, k); // 搜索到最接近的向量后拓展为 topk
     }
 } // hnsw

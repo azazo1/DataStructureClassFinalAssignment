@@ -4,8 +4,15 @@
 
 #ifndef PRIORITYQUEUE_H
 #define PRIORITYQUEUE_H
+#include <exception>
 
 namespace pq {
+    class EmptyPQException : public std::exception {
+        const char *what() const noexcept override {
+            return "Emtpy LinkedList";
+        }
+    };
+
     /**
      * 采用线性存储
      */

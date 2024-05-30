@@ -4,8 +4,15 @@
 
 #ifndef END_HOMEWORK_POINT_H
 #define END_HOMEWORK_POINT_H
+#include <exception>
 
 namespace point {
+    class InputException : public std::exception {
+        const char *what() const noexcept override {
+            return "Input Exception";
+        }
+    };
+
     /**
      * 定义了向量的维度数.
      * @note 此值只能在第一次输入的时候更改, 即只能在所有向量都没有创建之前更改.

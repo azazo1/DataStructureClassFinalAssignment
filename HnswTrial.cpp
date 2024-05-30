@@ -1,18 +1,20 @@
+//
+// Created by azazo1 on 2024/5/30.
+//
 #include <cstdio>
 #include <ctime>
 
+#include "src/hnsw/HNSW.h"
 #include "src/point/Point.h"
 #include "src/vec/Vec.h"
+using namespace point;
+using namespace vec;
+using namespace hnsw;
 
 #define DEBUG
 // #define DEBUG_SINGLE_SEARCH
-
-using namespace vec;
-using namespace point;
-
-extern Vec<int> baselineSearch(const Vec<Point> &, const Point &, int);
-
-extern Vec<int> baselineSearchWithHashSet(const Vec<Point> &, const Point &, int);
+#define DEBUG_GRAPH_NODE_BUFFER
+#define DEBUG_VEC_SET_LENGTH
 
 int main() {
     int n, d, k, nq;
@@ -24,6 +26,7 @@ int main() {
         pt.readFromInput();
         vec.push_back(pt);
     }
+    HNSW hnsw(&vec);
     scanf("%d", &nq);
     int cnt = 0;
     time_t start = time(NULL);
@@ -31,7 +34,7 @@ int main() {
         Point pt;
         pt.readFromInput();
         // auto vecIdx = baselineSearch(vec, pt, k);
-        auto vecIdx = baselineSearchWithHashSet(vec, pt, k);
+        auto vecIdx = hnsw.searchNearestTopK(pt, k);
         for (int j: vecIdx) {
 #ifndef DEBUG
 #ifndef DEBUG_SINGLE_SEARCH
