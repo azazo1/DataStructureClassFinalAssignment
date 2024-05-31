@@ -4,12 +4,14 @@ project(DataStructureClassFinalAssignment)
 set(CMAKE_CXX_STANDARD 17)
 
 add_compile_options(
-        #        -DDEBUG
+#        -DOUTPUT
+        #        -DDEBUG_INSTANT_SPEED
+                -DDEBUG_TOTAL_TIME
         #        -DDEBUG_SINGLE_SEARCH
         #        -DDEBUG_GRAPH_NODE_BUFFER
         #        -DDEBUG_VEC_SET_LENGTH
         #        -DDEBUG_HNSW_BUILD_LAYERS
-        -DDEBUG_HNSW_QUERY_LINKS
+        #        -DDEBUG_HNSW_QUERY_LINKS
         #        -DDEBUG_READING_FILE
         #        -DDEBUG_LAYER_EMPLACE_NODE
         #        -DDEBUG_LAYER_SEARCH_NEAREST_STEP

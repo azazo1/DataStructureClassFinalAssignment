@@ -7,9 +7,9 @@
 #include "Layer.h"
 #include "../vec/Vec.h"
 
-#define DK_LAYER1 5
-#define DK_LAYER2 50
-#define DK_LAYER3 300
+#define DK_LAYER1 100
+#define DK_LAYER2 500
+#define DK_LAYER3 1000
 
 namespace hnsw {
     /**
@@ -22,6 +22,9 @@ namespace hnsw {
         }
     };
 
+    /**
+     * 此算法奇快, 基本不用怎么在算法之外做优化就能得到超快的速度!!!
+     */
     class HNSW {
         const vec::Vec<point::Point> *ptVec;
         /**

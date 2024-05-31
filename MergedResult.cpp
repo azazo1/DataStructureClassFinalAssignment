@@ -4,10 +4,11 @@
 #include <cstdio>
 #include <cmath>
 #include <exception>
+#include <sys/timeb.h>
 
-#define DK_LAYER1 5
-#define DK_LAYER2 50
-#define DK_LAYER3 300
+#define DK_LAYER1 100
+#define DK_LAYER2 300
+#define DK_LAYER3 600
 
 namespace pq {
     class EmptyPQException : public std::exception {
@@ -838,7 +839,7 @@ namespace mylinklist {
  * 并与其建立连接.
  * @note 此值不代表 links 列表中元素个数最大值, 在后续节点加入 Graph 时, 节点可能被动拓展连接.
  */
-#define N_LINK 2
+#define N_LINK 10
 
 namespace hnsw {
     struct GraphNode {
@@ -1398,6 +1399,7 @@ using namespace hnsw;
 extern vec::Vec<int> baselineSearch(const vec::Vec<point::Point> &vec,
                                     const point::Point &query, const int k);
 
+#define OUTPUT
 
 void main1() {
     int n, d, k, nq;
@@ -1417,45 +1419,50 @@ void main1() {
     const HNSW hnsw(&vec);
     scanf("%d", &nq);
     int cnt = 0;
+    timeb start{};
+    ftime(&start);
     for (int i = 0; i < nq; i++) {
         Point pt;
         pt.readFromInput();
         auto vecIdx = hnsw.searchNearestTopK(pt, k);
         for (int j: vecIdx) {
-#ifndef DEBUG
-#ifndef DEBUG_SINGLE_SEARCH
+#ifndef DEBUG_INSTANT_SPEED
+#ifdef OUTPUT
             printf("%d ", j);
 #endif
 #endif
-
-#ifdef DEBUG_SINGLE_SEARCH
-            printf("\r%d, time: %lld, avg: %f",
-                   cnt++,
-                   time(NULL),
-                   1.0 * cnt / (time(NULL) - start));
-            fflush(stdout);
-#endif
         }
-#ifdef DEBUG
-#ifndef DEBUG_SINGLE_SEARCH
+        cnt++;
+#ifdef DEBUG_INSTANT_SPEED
         timeb now{};
         ftime(&now);
         printf("\r%d, time(s): %lld, time(ms): %hu, avg: %f Hz",
-               cnt++,
+               cnt,
                now.time - start.time,
                now.millitm - start.millitm,
                1.0 * cnt / ((now.time + now.millitm * 1.0 / 1000) -
                             (start.time + start.millitm * 1.0 / 1000)));
         fflush(stdout);
 #endif
-#endif
 
-#ifndef DEBUG
-#ifndef DEBUG_SINGLE_SEARCH
+#ifndef DEBUG_INSTANT_SPEED
+#ifdef OUTPUT
         printf("\n");
 #endif
 #endif
     }
+#ifdef DEBUG_INSTANT_SPEED
+    printf("\n");
+#endif
+#ifdef DEBUG_TOTAL_TIME
+    timeb now{};
+    ftime(&now);
+    printf("time(s): %lld, time(ms): %hu, avg: %f Hz",
+           now.time - start.time,
+           now.millitm - start.millitm,
+           1.0 * cnt / ((now.time + now.millitm * 1.0 / 1000) -
+                        (start.time + start.millitm * 1.0 / 1000)));
+#endif
 }
 
 int main() {

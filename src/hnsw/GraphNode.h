@@ -11,8 +11,9 @@
  * 每个节点的最大主动连接数, 在节点加入到 Graph 中, 每个节点查找与其最近的 N 个节点,
  * 并与其建立连接.
  * @note 此值不代表 links 列表中元素个数最大值, 在后续节点加入 Graph 时, 节点可能被动拓展连接.
+ * @note 个人大致测试了一下, 觉得 10 比较好.
  */
-#define N_LINK 3
+#define N_LINK 10
 
 namespace hnsw {
     struct GraphNode {

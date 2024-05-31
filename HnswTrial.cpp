@@ -10,8 +10,8 @@ using namespace point;
 using namespace vec;
 using namespace hnsw;
 
-extern vec::Vec<int> baselineSearch(const vec::Vec<point::Point> &vec,
-                                    const point::Point &query, const int k);
+extern Vec<int> baselineSearch(const Vec<Point> &vec,
+                               const Point &query, int k);
 
 
 void main1() {
@@ -39,40 +39,43 @@ void main1() {
         pt.readFromInput();
         auto vecIdx = hnsw.searchNearestTopK(pt, k);
         for (int j: vecIdx) {
-#ifndef DEBUG
-#ifndef DEBUG_SINGLE_SEARCH
+#ifndef DEBUG_INSTANT_SPEED
+#ifdef OUTPUT
             printf("%d ", j);
 #endif
 #endif
-
-#ifdef DEBUG_SINGLE_SEARCH
-            printf("\r%d, time: %lld, avg: %f",
-                   cnt++,
-                   time(NULL),
-                   1.0 * cnt / (time(NULL) - start));
-            fflush(stdout);
-#endif
         }
-#ifdef DEBUG
-#ifndef DEBUG_SINGLE_SEARCH
+        cnt++;
+#ifdef DEBUG_INSTANT_SPEED
         timeb now{};
         ftime(&now);
         printf("\r%d, time(s): %lld, time(ms): %hu, avg: %f Hz",
-               cnt++,
+               cnt,
                now.time - start.time,
                now.millitm - start.millitm,
                1.0 * cnt / ((now.time + now.millitm * 1.0 / 1000) -
                             (start.time + start.millitm * 1.0 / 1000)));
         fflush(stdout);
 #endif
-#endif
 
-#ifndef DEBUG
-#ifndef DEBUG_SINGLE_SEARCH
+#ifndef DEBUG_INSTANT_SPEED
+#ifdef OUTPUT
         printf("\n");
 #endif
 #endif
     }
+#ifdef DEBUG_INSTANT_SPEED
+    printf("\n");
+#endif
+#ifdef DEBUG_TOTAL_TIME
+    timeb now{};
+    ftime(&now);
+    printf("time(s): %lld, time(ms): %hu, avg: %f Hz",
+           now.time - start.time,
+           now.millitm - start.millitm,
+           1.0 * cnt / ((now.time + now.millitm * 1.0 / 1000) -
+                        (start.time + start.millitm * 1.0 / 1000)));
+#endif
 }
 
 /**
@@ -113,5 +116,5 @@ void main2() {
 }
 
 int main() {
-    main2();
+    main1();
 }
