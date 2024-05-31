@@ -10,13 +10,18 @@ namespace hnsw {
     }
 
     void HNSW::buildLayers() {
-        for (int i = 0; i < ptVec->getLength(); i++) {
+        const int len = ptVec->getLength();
+        for (int i = 0; i < len; i++) {
             // 注意这里也要改变搜索批次
             layer3.changeSearchBatch();
             layer2.changeSearchBatch();
             layer1.changeSearchBatch();
             layer0.changeSearchBatch();
-
+#ifdef DEBUG_HNSW_BUILD_LAYERS
+            if (i % 3 == 0) {
+                printf("Building...now: %d, tol: %d\n", i, len);
+            }
+#endif
             layer0.emplaceNode(*ptVec, i);
             layer1.emplaceNode(*ptVec, i);
             layer2.emplaceNode(*ptVec, i);

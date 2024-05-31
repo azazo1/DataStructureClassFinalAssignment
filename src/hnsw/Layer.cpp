@@ -21,12 +21,21 @@ namespace hnsw {
         const int nearest = searchNearestNode(ptVec, 0, ptVec[pointIdx]);
         changeSearchBatch();
         Vec<int> nearestTopK = expandTopK(ptVec, nearest, ptVec[pointIdx], N_LINK);
+#ifdef DEBUG_LAYER_EMPLACE_NODE
+        printf("DK: %d, Emplacing GraphNode: %d\n", dk, pointIdx);
+#endif
         for (const int i: nearestTopK) {
             // 建立双向连接
             if (i / dk != nodeIdx) {
                 // 不与自己建立连接
                 (*this)[i / dk].link(nodeIdx);
                 (*this)[nodeIdx].link(i / dk);
+#ifdef DEBUG_LAYER_EMPLACE_NODE
+                printf("GraphNode Link: %d-%d, Distance: %.2f\n",
+                       i,
+                       nodeIdx,
+                       ptVec[i].distanceTo(ptVec[pointIdx]));
+#endif
             }
         }
     }
@@ -86,13 +95,13 @@ namespace hnsw {
                     neighbor->inQueue = true;
                     queue.push_back(neighbor); // 插入到 queue 的节点都要保证已经缓存过.
                 }
-                if (queue.size() + rstQueue.getSize() == k) {
-                    break;
-                }
             }
         }
         while (!queue.empty()) {
             rstQueue.add(queue.pop_head());
+        }
+        while (rstQueue.getSize() > k) {
+            rstQueue.pop();
         }
         // 拓展完毕, rstQueue 中的节点数一定是 k.
         Vec<int> rst(k);

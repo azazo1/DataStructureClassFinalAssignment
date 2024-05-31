@@ -3,6 +3,16 @@ project(DataStructureClassFinalAssignment)
 
 set(CMAKE_CXX_STANDARD 17)
 
+add_compile_options(
+#        -DDEBUG
+#        -DDEBUG_SINGLE_SEARCH
+#        -DDEBUG_GRAPH_NODE_BUFFER
+#        -DDEBUG_VEC_SET_LENGTH
+#        -DDEBUG_HNSW_BUILD_LAYERS
+#        -DDEBUG_READING_FILE
+#        -DDEBUG_LAYER_EMPLACE_NODE
+)
+
 add_executable(BaselineTrial
         BaselineTrial.cpp
         src/point/Point.cpp

@@ -2,7 +2,6 @@
 // Created by azazo1 on 2024/5/30.
 //
 #include <cstdio>
-#include <ctime>
 #include "src/hnsw/HNSW.h"
 #include "src/point/Point.h"
 #include "src/vec/Vec.h"
@@ -14,10 +13,6 @@ using namespace hnsw;
 extern vec::Vec<int> baselineSearch(const vec::Vec<point::Point> &vec,
                                     const point::Point &query, const int k);
 
-#define DEBUG
-// #define DEBUG_SINGLE_SEARCH
-// #define DEBUG_GRAPH_NODE_BUFFER
-// #define DEBUG_VEC_SET_LENGTH
 
 void main1() {
     int n, d, k, nq;
@@ -28,8 +23,13 @@ void main1() {
         Point pt;
         pt.readFromInput();
         vec.push_back(pt);
+#ifdef DEBUG_READING_FILE
+        if (i % 10000 == 0) {
+            printf("Reading...now: %d, tol: %d\n", i, n);
+        }
+#endif
     }
-    HNSW hnsw(&vec);
+    const HNSW hnsw(&vec);
     scanf("%d", &nq);
     int cnt = 0;
     timeb start{};
@@ -87,6 +87,10 @@ void main2() {
         Point pt;
         pt.readFromInput();
         vec.push_back(pt);
+        if (i % 10000 == 0) {
+            printf("\rReading...now: %d, tol: %d", i, n);
+            fflush(stdout);
+        }
     }
     const HNSW hnsw(&vec);
     scanf("%d", &nq);
