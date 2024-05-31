@@ -50,15 +50,15 @@ add_executable(HnswTrial
 )
 
 add_executable(MergedResult MergedResult.cpp)
-add_executable(OtherHNSW lib/hnsw.cpp
-        lib/hnsw.cpp)
+add_executable(OtherHNSW reference/hnsw.cpp
+        reference/hnsw.cpp)
 add_executable(hnswlib
-        lib/hnswlib/hnswlib.h
-        lib/hnswlib/bruteforce.h
-        lib/hnswlib/hnswalg.h
-        lib/hnswlib/space_ip.h
-        lib/hnswlib/space_l2.h
-        lib/hnswlib/visited_list_pool.h
-        lib/hnswlib/stop_condition.h
+        reference/hnswlib/hnswlib.h
+        reference/hnswlib/bruteforce.h
+        reference/hnswlib/hnswalg.h
+        reference/hnswlib/space_ip.h
+        reference/hnswlib/space_l2.h
+        reference/hnswlib/visited_list_pool.h
+        reference/hnswlib/stop_condition.h
         LibTrial.cpp
 )

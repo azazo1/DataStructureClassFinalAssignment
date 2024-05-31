@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "lib/hnswlib/hnswlib.h"
+#include "reference/hnswlib/hnswlib.h"
 
 
 int main() {
