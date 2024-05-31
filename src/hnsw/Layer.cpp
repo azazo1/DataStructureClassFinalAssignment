@@ -119,7 +119,7 @@ namespace hnsw {
             return Vec<int>();
         }
         if (length <= k) {
-            // Layer 节点数不够, 不拓展了, 直接返回
+            // Layer 节点数不够, 不搜索了, 直接返回
             // 排序
             pq::PriorityQueue<const GraphNode *> pq(length, compareNodeInverse);
             // get ↑ 方法取出的是距离最近的节点.
@@ -210,11 +210,7 @@ namespace hnsw {
 #endif
             node = newNode;
             newNode = nullptr;
-            // const int neighborCnt = node->links.size();
-            // for (int i = 0; i < neighborCnt; i++) {
             // 遍历每个邻居
-            // int neighborIdx;
-            // node->links.retrieve(i, neighborIdx);
             for (mylinklist::Iterator<int> i = node->links.getIter(); i.hasNext();) {
                 const int neighborIdx = i.next();
                 GraphNode &neighbor = arr[neighborIdx];
