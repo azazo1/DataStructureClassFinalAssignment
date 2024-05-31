@@ -42,6 +42,31 @@ namespace hnsw {
         nearestPt = layer0.searchNearestNode(*ptVec, nearestPt, target);
 
         layer0.changeSearchBatch(); // inQueue 针对的队列发生变化
-        return layer0.expandTopK(*ptVec, nearestPt, target, k); // 搜索到最接近的向量后拓展为 topk
+        return layer0.searchKNN(*ptVec, nearestPt, target, k); // 搜索到最接近的向量后拓展为 topk
+    }
+
+    void HNSW::queryLinks(const point::Point *distanceReference) const {
+#ifndef DEBUG_HNSW_QUERY_LINKS
+        throw NotDebuggingException();
+#endif
+        int ptIdx;
+        while (scanf("%d", &ptIdx) == 1) {
+            double distance;
+            if (distanceReference != nullptr) {
+                distance = distanceReference->distanceTo(ptVec->operator[](ptIdx));
+            } else {
+                distance = 0;
+            }
+            printf("%5d(%.2f) links(distance): ", ptIdx, distance);
+            for (mylinklist::Iterator<int> i = layer0[ptIdx].links.getIter(); i.hasNext();) {
+                const int neighborIdx = i.next();
+                printf("%5d(%.2f) ", neighborIdx,
+                       ptVec->operator[](neighborIdx).distanceTo(
+                           distanceReference != nullptr
+                               ? *distanceReference
+                               : ptVec->operator[](ptIdx)));
+            }
+            printf("\n");
+        }
     }
 } // hnsw

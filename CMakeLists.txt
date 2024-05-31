@@ -4,13 +4,15 @@ project(DataStructureClassFinalAssignment)
 set(CMAKE_CXX_STANDARD 17)
 
 add_compile_options(
-#        -DDEBUG
-#        -DDEBUG_SINGLE_SEARCH
-#        -DDEBUG_GRAPH_NODE_BUFFER
-#        -DDEBUG_VEC_SET_LENGTH
-#        -DDEBUG_HNSW_BUILD_LAYERS
-#        -DDEBUG_READING_FILE
-#        -DDEBUG_LAYER_EMPLACE_NODE
+        #        -DDEBUG
+        #        -DDEBUG_SINGLE_SEARCH
+        #        -DDEBUG_GRAPH_NODE_BUFFER
+        #        -DDEBUG_VEC_SET_LENGTH
+        #        -DDEBUG_HNSW_BUILD_LAYERS
+        -DDEBUG_HNSW_QUERY_LINKS
+        #        -DDEBUG_READING_FILE
+        #        -DDEBUG_LAYER_EMPLACE_NODE
+        #        -DDEBUG_LAYER_SEARCH_NEAREST_STEP
 )
 
 add_executable(BaselineTrial
@@ -47,3 +49,15 @@ add_executable(HnswTrial
 )
 
 add_executable(MergedResult MergedResult.cpp)
+add_executable(OtherHNSW lib/hnsw.cpp
+        lib/hnsw.cpp)
+add_executable(hnswlib
+        lib/hnswlib/hnswlib.h
+        lib/hnswlib/bruteforce.h
+        lib/hnswlib/hnswalg.h
+        lib/hnswlib/space_ip.h
+        lib/hnswlib/space_l2.h
+        lib/hnswlib/visited_list_pool.h
+        lib/hnswlib/stop_condition.h
+        LibTrial.cpp
+)

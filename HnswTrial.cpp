@@ -87,10 +87,11 @@ void main2() {
         Point pt;
         pt.readFromInput();
         vec.push_back(pt);
+#ifdef DEBUG_READING_FILE
         if (i % 10000 == 0) {
-            printf("\rReading...now: %d, tol: %d", i, n);
-            fflush(stdout);
+            printf("Reading...now: %d, tol: %d\n", i, n);
         }
+#endif
     }
     const HNSW hnsw(&vec);
     scanf("%d", &nq);
@@ -100,12 +101,15 @@ void main2() {
         auto baseline = baselineSearch(vec, pt, k);
         auto vecIdx = hnsw.searchNearestTopK(pt, k);
         for (int i = 0; i < k; i++) {
-            printf("Distance: %f, %f\n",
+            printf("Node: %10d:%10d, \tDistance: %f, %f\n",
+                   vecIdx[i],
+                   baseline[i],
                    pt.distanceTo(vec[vecIdx[i]]),
                    pt.distanceTo(vec[baseline[i]]));
         }
         printf("\n");
     }
+    hnsw.queryLinks(&vec[79]);
 }
 
 int main() {

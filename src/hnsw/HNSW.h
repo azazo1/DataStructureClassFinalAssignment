@@ -12,6 +12,16 @@
 #define DK_LAYER3 300
 
 namespace hnsw {
+    /**
+     * 见 queryLinks
+     */
+    class NotDebuggingException final : public std::exception {
+    public:
+        const char *what() const noexcept override {
+            return "Program is not debugging";
+        }
+    };
+
     class HNSW {
         const vec::Vec<point::Point> *ptVec;
         /**
@@ -48,9 +58,17 @@ namespace hnsw {
         /**
          * 找到和目标向量最接近的向量.
          * @param target 目标向量
+         * @param k 最近向量数量
          * @return 最接近的向量在向量容器中的索引值, 元素数有 k 个.
          */
         vec::Vec<int> searchNearestTopK(const point::Point &target, int k) const;
+
+        /**
+         * 此方法从标准输入中读取向量在向量容器中的索引, 然后输出 layer0 中的对应节点所拥有的 links.
+         * @param distanceReference 显示每个节点和此向量的距离, 如果提供 nullptr 则距离代表节点和查询节点的距离.
+         * @note 此方法仅做测试用, 在宏 DEBUG_HNSW_QUERY_LINKS 没被定义时调用会抛出 NotDebuggingException 异常.
+         */
+        void queryLinks(const point::Point *distanceReference = nullptr) const;
     };
 } // hnsw
 

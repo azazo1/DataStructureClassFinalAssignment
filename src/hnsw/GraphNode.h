@@ -12,7 +12,7 @@
  * 并与其建立连接.
  * @note 此值不代表 links 列表中元素个数最大值, 在后续节点加入 Graph 时, 节点可能被动拓展连接.
  */
-#define N_LINK 4
+#define N_LINK 3
 
 namespace hnsw {
     struct GraphNode {
@@ -65,6 +65,13 @@ namespace hnsw {
      * 上一个方法的非 const 版本.
      */
     bool compareNode(GraphNode *n1, GraphNode *n2);
+
+    /**
+     * 反向比较版本.
+     */
+    bool compareNodeInverse(const GraphNode *n1, const GraphNode *n2);
+
+    bool compareNodeInverse(GraphNode *n1, GraphNode *n2);
 } // hnsw
 
 #endif //GRAPHNODE_H
