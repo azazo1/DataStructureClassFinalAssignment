@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_compile_options(
         -DOUTPUT
         #        -DDEBUG_INSTANT_SPEED
-        -DDEBUG_TOTAL_TIME
+        -DDEBUG_SUMMARY
         #        -DDEBUG_GRAPH_NODE_BUFFER
         #        -DDEBUG_VEC_SET_LENGTH
         #        -DDEBUG_HNSW_BUILD_LAYERS
@@ -61,4 +61,7 @@ add_executable(hnswlib
         reference/hnswlib/visited_list_pool.h
         reference/hnswlib/stop_condition.h
         LibTrial.cpp
+)
+add_executable(RecallCalc
+        RecallRatio.cpp
 )

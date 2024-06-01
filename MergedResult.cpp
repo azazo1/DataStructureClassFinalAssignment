@@ -1454,7 +1454,7 @@ void main1() {
 #ifdef DEBUG_INSTANT_SPEED
     printf("\n");
 #endif
-#ifdef DEBUG_TOTAL_TIME
+#ifdef DEBUG_SUMMARY
     timeb now{};
     ftime(&now);
     printf("time(s): %lld, time(ms): %hu, avg: %f Hz",

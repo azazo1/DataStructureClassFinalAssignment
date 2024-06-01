@@ -26,7 +26,9 @@ namespace hnsw {
          */
         mutable double distance = -1;
         /**
-         * 用来标志此节点是否在队列中.
+         * 用来标志此节点是否在队列中, 在后来此值的意义改变,
+         * 变成了是否在搜索过程中探索了此节点, 也就是说此变量可以和 batch 融合,
+         * batch == searchBatch 时说明此次搜索探索过此节点, 但我懒得改了.
          */
         mutable bool inQueue = false;
         /**

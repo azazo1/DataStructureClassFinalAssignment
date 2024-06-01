@@ -29,11 +29,13 @@ void main1() {
         }
 #endif
     }
+    timeb startBuilding{};
+    ftime(&startBuilding);
     const HNSW hnsw(&vec);
     scanf("%d", &nq);
     int cnt = 0;
-    timeb start{};
-    ftime(&start);
+    timeb startSearching{};
+    ftime(&startSearching);
     for (int i = 0; i < nq; i++) {
         Point pt;
         pt.readFromInput();
@@ -67,14 +69,23 @@ void main1() {
 #ifdef DEBUG_INSTANT_SPEED
     printf("\n");
 #endif
-#ifdef DEBUG_TOTAL_TIME
+#ifdef DEBUG_SUMMARY
     timeb now{};
     ftime(&now);
-    printf("time(s): %lld, time(ms): %hu, avg: %f Hz",
-           now.time - start.time,
-           now.millitm - start.millitm,
-           1.0 * cnt / ((now.time + now.millitm * 1.0 / 1000) -
-                        (start.time + start.millitm * 1.0 / 1000)));
+    const time_t buildingTime = (startSearching.time - startBuilding.time) * 1000
+                                + startSearching.millitm - startBuilding.millitm;
+    const time_t searchingTime = (now.time - startSearching.time) * 1000
+                                 + now.millitm - startSearching.millitm;
+    printf("\nParameters: { DK_LAYER1: %d, DK_LAYER2: %d, DK_LAYER3: %d, N_LINK: %d }\n",
+           DK_LAYER1, DK_LAYER2, DK_LAYER3, N_LINK);
+    printf("Building Result { cnt: %d, time(ms): %lld, avg: %f Hz }\n",
+           n,
+           buildingTime,
+           n / static_cast<double>(buildingTime) * 1000);
+    printf("Searching Result { cnt: %d, time(ms) : %lld, avg: %f Hz }\n",
+           cnt,
+           searchingTime,
+           cnt / static_cast<double>(searchingTime) * 1000);
 #endif
 }
 
