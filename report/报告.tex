@@ -1,0 +1,155 @@
+%! Author = azazo1
+%! Date = 2024/6/1
+
+% Preamble
+\documentclass[11pt, UTF8]{article}
+
+\title{华东师范大学软件工程学院实验报告}
+\author{}
+\date{}
+
+% Packages
+\usepackage[hidelinks]{hyperref} % 点击跳转
+\usepackage{amsmath}
+\usepackage{ctex}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{fontspec}
+\usepackage{amsfonts}
+
+% 设置链接颜色
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=blue,
+    urlcolor=blue,
+    citecolor=black,
+}
+
+\geometry{left=15mm, right=15mm, top=20mm, bottom=20mm}
+
+% 代码块设置
+\renewcommand{\lstlistingname}{代码} % 改 `Listing` 为 `代码`
+\lstset {
+    backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+    basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+    breakatwhitespace=true,         % sets if automatic breaks should only happen at whitespace
+    breaklines=true,                 % sets automatic line breaking
+%    captionpos=bl,                   % sets the caption-position to bottom
+    commentstyle=\color{green},    % comment style
+%    deletekeywords={...},            % if you want to delete keywords from the given language
+%    escapeinside={\%*}{*},          % if you want to add LaTeX within your code
+    extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+    frame=single,                    % adds a frame around the code
+    keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+    keywordstyle=\color{blue},       % keyword style
+% language=Python,               % the language of the code
+%    morekeywords={*,...},            % if you want to add more keywords to the set
+    numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+    numbersep=5pt,                   % how far the line-numbers are from the code
+    numberstyle=\tiny\color{gray}, % the style that is used for the line-numbers
+    rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+    showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+    showstringspaces=false,          % underline spaces within strings only
+    showtabs=false,                  % show tabs within strings adding particular underscores
+    stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+    stringstyle=\color{orange},      % string literal style
+    tabsize=4,                       % sets default tabsize to 2 spaces
+% title=Python Code              % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+% 代码块引入
+%\lstinputlisting [
+%    label=lst:label,
+%    caption=caption,
+%    captionpos=b, % 标题放底下
+%    language=C,
+%] {filename.c}
+
+% 页眉设置
+\pagestyle{fancy}
+\fancyhead[C]{华东师范大学软件工程学院实验报告} % 中间页眉
+\fancypagestyle{plain}{ % 让第一页显示页眉
+    \pagestyle{fancy}
+}
+
+% 中文字体设置
+\setCJKmainfont{楷体} % 需要导入 fontspec 包, 并且改 pdfLatex 为 XeLaTex
+
+% Document
+\begin{document}
+    \maketitle{}
+
+    \begin{table} [H]
+        \centering
+        \label{tab:information-table}
+        \begin{tabular}{@{}p{0.30\textwidth}p{0.30\textwidth}p{0.30\textwidth}@{}}
+            % @{} 表示左边或右边没填充
+            % p{} 表示这是一个段落, 会让内容自动换行, 大括号里的是设置宽度
+            \hline
+            实验课程: 数据结构实践 & 年级: 2023 级      & 实验成绩:            \\
+            实验名称: 向量搜索算法 & 姓名: 关卓谦         &                  \\
+            实验编号:        & 学号: 10235101529 & 实验日期: 2024年5月29日 \\
+            指导老师: 王丽苹    & 组号:             &                  \\
+            \hline
+        \end{tabular}
+    \end{table}
+
+    \tableofcontents
+
+
+    \section{实验简介}\label{sec:lab-intro}
+    本次作业要求我们实现向量的搜索算法, 即
+    给定一个向量的集合 $X \in \mathbb{R}^{n \times d}$, 其中包含了 \textit{n} 个 \textit{d} 维的向量.
+    对于一个查询向量 $\mathbf{q}$, 向量最近邻搜索的目的是从 \textit{X} 中找到一个向量 $\mathbf{x}^*$, 满足
+    \[ \mathbf{x}^* = \arg\min_{\mathbf{x} \in X} \delta(\mathbf{x}, \mathbf{q}) \]
+
+    即寻找 \(\mathbf{q}\) 最近邻的向量.
+    其中 \(\delta(\cdot, \cdot)\) 表示向量之间的距离函数, 它的数学定义如下 (欧几里得距离):
+
+    \[
+        \delta(\mathbf{x}, \mathbf{y}) = \sum_{i=1}^{d} (x_i - y_i)^2
+    \]
+
+    其中, \(x_i\) 和 \(y_i\) 分别表示 \(\mathbf{x}\) 和 \(\mathbf{y}\) 的第 \(i\) 维分量.
+
+    如上定义可以非常简单地扩展到 K-最近邻搜索 (K-Nearest Neighbor Search), 即搜索 \(K\) 个最近邻的向量.
+    但是当 \(n\) 和 \(d\) 的数目显著增加的时候, 精确最近邻搜索往往不再适用 (搜索成本太高), 我们往往会在牺牲准确率的情况下,
+    提高搜索的速度, 这就是相似最近邻搜索 (Approximate Nearest Neighbor Search, ANN).
+    相似最近邻搜索的衡量指标 (召回率) 定义为
+
+    \[
+        \text{Recall@k} = \frac{|R \cap \hat{R}|}{k}
+    \]
+
+    其中 \(R\) 是 \(\mathbf{q}\) 真正的 \(k\) 个最近邻向量的集合, \(\hat{R}\) 是通过算法得到的近似最近邻向量的集合.
+
+
+    \input{latex-part/步骤}
+
+
+    \section{项目结构}
+    此次作业可在本人的 github 仓库: \href{https://github.com/azazo1/DataStructureClassFinalAssignment}{DataStructureClassFinalAssignment}
+    上找到项目源码.
+
+    \begin{itemize}
+        \item 项目根目录 \texttt{*Trial.cpp} 存放了我的不同的尝试代码, \texttt{MergedResult.cpp} 是所有代码的整合,
+        可读性不强, 是交到 EOJ 上的代码.
+        \item \texttt{src} 目录下存放了我自己写的基本数据结构.
+        \item \texttt{src/hnsw} 目录下存放的是 hnsw 代码.
+    \end{itemize}
+
+    编写此算法时, 我的代码大致框架是:
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{img/code-structure}
+        \caption{Code Structure}
+        \label{fig:code-structure}
+    \end{figure}
+
+    另: 代码内有详细的注释.
+\end{document}
