@@ -9,10 +9,10 @@ add_compile_options(
         -DDEBUG_SUMMARY
         #        -DDEBUG_GRAPH_NODE_BUFFER
         #        -DDEBUG_VEC_SET_LENGTH
-        #        -DDEBUG_HNSW_BUILD_LAYERS
+#                -DDEBUG_HNSW_BUILD_LAYERS
         #        -DDEBUG_HNSW_QUERY_LINKS
-        #        -DDEBUG_READING_FILE
-        #        -DDEBUG_LAYER_EMPLACE_NODE
+#                -DDEBUG_READING_FILE
+#                -DDEBUG_LAYER_EMPLACE_NODE
         #        -DDEBUG_LAYER_SEARCH_NEAREST_STEP
 )
 

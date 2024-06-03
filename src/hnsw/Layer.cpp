@@ -11,9 +11,10 @@ namespace hnsw {
     Layer::Layer(const int dk): dk(dk) {
     }
 
-    void Layer::emplaceNode(const Vec<point::Point> &ptVec, const int pointIdx) {
+    int Layer::emplaceNode(const Vec<point::Point> &ptVec, const int pointIdx,
+                           const int startPtIdx) {
         if (pointIdx % dk != 0) {
-            return;
+            return startPtIdx;
         }
         const GraphNode node(pointIdx);
         const int nodeIdx = length; // 此处 length 应该等于 pointIdx / dk
@@ -22,7 +23,7 @@ namespace hnsw {
 #endif
         push_back(node); // 此处发生了拷贝, 因此下方以左值使用 node 将会是错误的,
         // ↑ 此处直接添加到 layer 里可以防止 searchNearestNode 遇到空的情况, 同时此节点又与其他节点没有连接, 不会使 nearest 和 nodeIdx 相同.
-        const int nearest = searchNearestNode(ptVec, 0, ptVec[pointIdx]);
+        const int nearest = searchNearestNode(ptVec, startPtIdx, ptVec[pointIdx]);
         changeSearchBatch();
         Vec<int> nearestTopK = searchKNN(ptVec, nearest, ptVec[pointIdx], N_LINK);
         for (const int i: nearestTopK) {
@@ -39,6 +40,7 @@ namespace hnsw {
 #endif
             }
         }
+        return nearest;
     }
 
     vec::Vec<int> Layer::expandTopK(const Vec<point::Point> &ptVec, const int startPtIdx,

@@ -39,8 +39,10 @@ namespace hnsw {
          * @note Layer 会自己决定是否要把此向量添加到层中, 因素是 dk.
          * @param ptVec 向量容器
          * @param pointIdx 要添加的节点在向量容器中的索引
+         * @param startPtIdx 搜索最近节点作为邻居时的起始搜索节点的索引值
+         * @return 距离 pointIdx 所代表的向量最近的节点的索引, 若 pointIdx 不存在于此层中, 则返回 startPtIdx 的值.
          */
-        void emplaceNode(const Vec<point::Point> &ptVec, int pointIdx);
+        int emplaceNode(const Vec<point::Point> &ptVec, int pointIdx, int startPtIdx = 0);
 
         /**
          * 把 nearest 向量拓展为 topk.

@@ -22,10 +22,10 @@ namespace hnsw {
                 printf("Building...now: %d, tol: %d\n", i, len);
             }
 #endif
-            layer0.emplaceNode(*ptVec, i);
-            layer1.emplaceNode(*ptVec, i);
-            layer2.emplaceNode(*ptVec, i);
-            layer3.emplaceNode(*ptVec, i);
+            int searchStartIdx = layer3.emplaceNode(*ptVec, i);
+            searchStartIdx = layer2.emplaceNode(*ptVec, i, searchStartIdx);
+            searchStartIdx = layer1.emplaceNode(*ptVec, i, searchStartIdx);
+            layer0.emplaceNode(*ptVec, i, searchStartIdx);
         }
     }
 

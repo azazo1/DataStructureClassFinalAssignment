@@ -9,7 +9,7 @@
 namespace pq {
     class EmptyPQException : public std::exception {
         const char *what() const noexcept override {
-            return "Emtpy LinkedList";
+            return "Empty PriorityQueue";
         }
     };
 

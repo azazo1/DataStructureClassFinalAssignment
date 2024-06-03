@@ -13,7 +13,7 @@
 namespace pq {
     class EmptyPQException : public std::exception {
         const char *what() const noexcept override {
-            return "Emtpy LinkedList";
+            return "Empty PriorityQueue";
         }
     };
 
@@ -497,7 +497,7 @@ namespace point {
 namespace mylinklist {
     class EmptyException : public std::exception {
         const char *what() const noexcept override {
-            return "Emtpy LinkedList";
+            return "Empty LinkedList";
         }
     };
 
