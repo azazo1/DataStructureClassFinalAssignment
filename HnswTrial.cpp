@@ -51,13 +51,12 @@ void main1() {
 #ifdef DEBUG_INSTANT_SPEED
         timeb now{};
         ftime(&now);
-        printf("\r%d, time(s): %lld, time(ms): %hu, avg: %f Hz",
-               cnt,
-               now.time - start.time,
-               now.millitm - start.millitm,
-               1.0 * cnt / ((now.time + now.millitm * 1.0 / 1000) -
-                            (start.time + start.millitm * 1.0 / 1000)));
-        fflush(stdout);
+        const time_t searchingTime = (now.time - startSearching.time) * 1000
+                                     + now.millitm - startSearching.millitm;
+        printf("Building Result { cnt: %d, time(ms): %lld, avg: %f Hz }\n",
+               n,
+               searchingTime,
+               n / static_cast<double>(searchingTime) * 1000);
 #endif
 
 #ifndef DEBUG_INSTANT_SPEED
